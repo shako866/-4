@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Пайымдау Сәті - Викторина (16:9)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Comfortaa:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);
+      font-family: 'Fredoka', 'Comfortaa', cursive, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .app-viewport {
+      width: 96vw;
+      max-width: 1280px;
+      aspect-ratio: 16 / 9;
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25), 0 0 0 10px #ffde59;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      border: 8px solid #ff914d;
+    }
+
+    .header {
+      background: #ff66c4;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      border-bottom: 6px solid #ff3399;
+      z-index: 10;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 700;
+      text-shadow: 2px 2px 0px #b30059;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .progress-bar-container {
+      width: 200px;
+      height: 18px;
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 3px solid #b30059;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 10%;
+      background: #00e676;
+      transition: width 0.4s ease;
+    }
+
+    .score-badge {
+      background: #ffde59;
+      color: #333;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 18px;
+      border: 3px solid #ff914d;
+    }
+
+    .screen {
+      flex: 1;
+      display: flex;
+      padding: 20px 30px;
+      gap: 20px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .start-screen {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 20px;
+      background: radial-gradient(circle, #fff9e6 0%, #ffe680 100%);
+    }
+
+    .start-title {
+      font-size: 40px;
+      color: #ff3399;
+      text-shadow: 3px 3px 0 #ffde59;
+    }
+
+    .rules-card {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 20px;
+      border: 4px solid #ff914d;
+      max-width: 800px;
+      text-align: left;
+      font-size: 16px;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    .btn-start {
+      background: #00e676;
+      color: white;
+      font-size: 26px;
+      font-weight: 700;
+      padding: 14px 40px;
+      border-radius: 50px;
+      border: none;
+      border-bottom: 6px solid #00a854;
+      cursor: pointer;
+      transition: transform 0.1s;
+      font-family: inherit;
+    }
+
+    .btn-start:active {
+      transform: translateY(4px);
+      border-bottom-width: 2px;
+    }
+
+    .content-left {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .content-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .text-card {
+      background: #f0f7ff;
+      border: 4px solid #5271ff;
+      border-radius: 20px;
+      padding: 16px 20px;
+      font-size: 16px;
+      color: #2c3e50;
+      line-height: 1.5;
+      box-shadow: 0 6px 0 #3b52c4;
+      position: relative;
+    }
+
+    .text-badge {
+      background: #5271ff;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .question-card {
+      background: #fff0f5;
+      border: 4px solid #ff66c4;
+      border-radius: 20px;
+      padding: 16px 20px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #a10054;
+      box-shadow: 0 6px 0 #d81b60;
+    }
+
+    .option-btn {
+      background: white;
+      border: 4px solid #ff914d;
+      border-radius: 18px;
+      padding: 14px 20px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #333;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #e65100;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: inherit;
+    }
+
+    .option-btn:hover {
+      background: #fff8f0;
+      transform: translateY(-2px);
+    }
+
+    .option-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #e65100;
+    }
+
+    .option-btn.correct {
+      background: #b9f6ca !important;
+      border-color: #00e676 !important;
+      color: #006020 !important;
+      box-shadow: 0 6px 0 #00a854 !important;
+    }
+
+    .option-btn.wrong {
+      background: #ff8a80 !important;
+      border-color: #ff5252 !important;
+      color: #800000 !important;
+      box-shadow: 0 6px 0 #d32f2f !important;
+    }
+
+    .option-prefix {
+      background: #ffde59;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border: 2px solid #ff914d;
+      flex-shrink: 0;
+    }
+
+    .feedback-area {
+      position: absolute;
+      bottom: 20px;
+      right: 30px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 20;
+    }
+
+    .feedback-area.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .meme-sticker {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 6px solid white;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .next-btn {
+      background: #5271ff;
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+      padding: 12px 30px;
+      border-radius: 30px;
+      border: none;
+      border-bottom: 5px solid #2b44be;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .smiley-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 99;
+    }
+
+    .smiley {
+      position: absolute;
+      top: -50px;
+      font-size: 36px;
+      animation: fall 2s linear forwards;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(650px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
+    }
+
+    .final-screen {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 15px;
+      width: 100%;
+    }
+
+    .final-score {
+      font-size: 48px;
+      color: #ff3399;
+      text-shadow: 3px 3px 0 #ffde59;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-viewport">
+  <div class="smiley-container" id="smiley-container"></div>
+
+  <div class="header">
+    <div class="title">💡 Пайымдау Сәті</div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <div class="score-badge">Ұпай: <span id="score">0</span>/10</div>
+  </div>
+
+  <div class="screen start-screen" id="start-screen">
+    <h1 class="start-title">🧠 Пайымдау Мәтіні Викторинасы</h1>
+    <div class="rules-card">
+      <p><b>Пайымдау мәтіні дегеніміз не?</b></p>
+      <p>Бұл — құбылыстың немесе оқиғаның <b>себеп-салдары мен мағынасын</b> түсіндіретін мәтін.</p>
+      <br>
+      <p>📌 <b>Құрылымы:</b> Тұжырым ➔ Дәлелдеу (<i>Өйткені, себебі...</i>) ➔ Қорытынды (<i>Сондықтан...</i>)</p>
+      <p>❓ <b>Негізгі сұрағы:</b> «Неліктен?», «Не себепті?»</p>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">Ойынды Бастау 🚀</button>
+  </div>
+
+  <div class="screen" id="quiz-screen" style="display: none;">
+    <div class="content-left">
+      <div class="text-card">
+        <span class="text-badge" id="q-num">1-сұрақ</span>
+        <div id="text-content">Мәтін жүктелуде...</div>
+      </div>
+      <div class="question-card" id="question-text">
+        Сұрақ жүктелуде...
+      </div>
+    </div>
+
+    <div class="content-right" id="options-container"></div>
+
+    <div class="feedback-area" id="feedback-area">
+      <div class="meme-sticker" id="meme-sticker">🥳</div>
+      <button class="next-btn" onclick="nextQuestion()">Келесі ➔</button>
+    </div>
+  </div>
+
+  <div class="screen final-screen" id="final-screen" style="display: none;">
+    <h1 class="start-title">Керемет! 🏆</h1>
+    <div class="final-score" id="final-score-text">10 / 10</div>
+    <p id="final-comment" style="font-size: 20px; color: #555;"></p>
+    <button class="btn-start" onclick="restartQuiz()">Қайтадан ойнау 🔄</button>
+  </div>
+</div>
+
+<script>
+  const quizData = [
+    {
+      text: "«Қайың — өте пайдалы ағаш. Өйткені одан әдемі жиһаз жасалады, қайың майымен былғары өңделеді, сондай-ақ ол ауадағы улы газдарды өткізбейді. Сондықтан қайыңды қорғау керек.»",
+      question: "Мәтінде қайыңның пайдалы ағаш екендігі НЕЛІКТЕН айтылған?",
+      options: [
+        "Өйткені ол өте биік болып өседі",
+        "Өйткені одан жиһаз жасалады, былғары өңделеді және ауаны тазартады",
+        "Себебі қайың тек орманда ғана өседі"
+      ],
+      correct: 1
+    },
+    {
+      text: "«Тазалық сақтау — әрбір адамның басты міндеті. Өйткені тазалық бар жерде ауру-сырқау азаяды. Сондықтан біз сыныбымызды әрдайым таза ұстауымыз керек.»",
+      question: "Неліктен сыныпты таза ұстауымыз керек?",
+      options: [
+        "Өйткені тазалық сақталған жерде ауру азаяды",
+        "Себебі сыныпта сабақ аяқталды",
+        "Сондықтан мұғалім ренжімейді"
+      ],
+      correct: 0
+    },
+    {
+      text: "«Күзде құстар жылы жаққа ұшып кетеді. Себебі қыста күн суытып, оларға азық табу қиындайды. Соның салдарынан құстар оңтүстікке бет алады.»",
+      question: "Құстардың күзде жылы жаққа ұшуының НЕГІЗГІ СЕБЕБІ не?",
+      options: [
+        "Жаңа ұя салғысы келгендіктен",
+        "Күн суытып, азық табу қиындайтындықтан",
+        "Ұшуды жақсы көргендіктен"
+      ],
+      correct: 1
+    },
+    {
+      text: "«Кітап — біздің ең жақын досымыз. Өйткені ол бізге білім береді және дүниетанымымызды кеңейтеді. Сондықтан кітапты күтіп ұстап, көп оқу керек.»",
+      question: "Мәтінге сүйене отырып пайымдаңыз: Неліктен кітапты досымыз дейміз?",
+      options: [
+        "Себебі оның суреттері өте көп",
+        "Өйткені ол білім беріп, дүниетанымды кеңейтеді",
+        "Сондықтан оны сөмкеге салып жүреміз"
+      ],
+      correct: 1
+    },
+    {
+      text: "«Суды үнемдеп жұмсау қажет. Өйткені су — тіршілік көзі, ал тұщы су қоры шектеулі. Сондықтан шұмекті босқа ашып қоймаған жөн.»",
+      question: "Мәтінде суды үнемдеу керектігі НЕ СЕБЕПТІ дәлелденген?",
+      options: [
+        "Өйткені ол тіршілік көзі және тұщы су қоры шектеулі",
+        "Себебі су өте суық",
+        "Сондықтан сумен ойнауға болмайды"
+      ],
+      correct: 0
+    },
+    {
+      text: "«Нанды ысырап етуге болмайды. Өйткені нан дастарқанға үлкен еңбекпен келеді. Сондықтан әрбір түйірін қадірлеуіміз керек.»",
+      question: "Нанды қадірлеудің басты себебі неде?",
+      options: [
+        "Себебі ол дүкенде сатылады",
+        "Өйткені ол дастарқанға үлкен еңбекпен келеді",
+        "Сондықтан нан тәтті болады"
+      ],
+      correct: 1
+    },
+    {
+      text: "«Спортпен шұғылдану өте пайдалы. Өйткені ол адамның денсаулығын нығайтып, бойға қуат береді. Сондықтан күнделікті таңертеңгілік жаттығу жасау керек.»",
+      question: "Автордың пайымдауынша, неліктен спортпен шұғылдану керек?",
+      options: [
+        "Денсаулықты нығайтып, бойға қуат беретіндіктен",
+        "Уақытты тез өткізу үшін",
+        "Тек жарыстарға қатысу үшін"
+      ],
+      correct: 0
+    },
+    {
+      text: "«Орман — планетамыздың өкпесі. Себебі ағаштар оттегі бөліп шығарып, ауаны тазартады. Сондықтан ормандарды кесуге болмайды.»",
+      question: "Орманды неліктен «планетаның өкпесі» деп атайды?",
+      options: [
+        "Өйткені онда аңдар өмір сүреді",
+        "Себебі ағаштар оттегі бөліп, ауаны тазартады",
+        "Сондықтан онда саңырауқұлақ көп"
+      ],
+      correct: 1
+    },
+    {
+      text: "«Бағдаршам ережелерін қатаң сақтау керек. Өйткені бұл жол апатының алдын алып, өмірімізді сақтайды. Сондықтан тек жасыл түске өту керек.»",
+      question: "Не себепті бағдаршам ережелерін сақтау маңызды?",
+      options: [
+        "Жол апатының алдын алып, өмірді сақтау үшін",
+        "Бағдаршамның түстері әдемі болғандықтан",
+        "Көліктер жылдам жүруі үшін"
+      ],
+      correct: 0
+    },
+    {
+      text: "«Табиғатты қорғау — ортақ іс. Өйткені табиғатсыз адам баласы өмір сүре алмайды. Сондықтан әрбір ағаш пен бұлақты аялаумыз қажет.»",
+      question: "Мәтіннің қорытынды пайымдауы қандай?",
+      options: [
+        "Табиғатта серуендеу керек",
+        "Өйткені табиғатсыз адам өмір сүре алмайтындықтан, оны аялау қажет",
+        "Бұлақтан су ішу керек"
+      ],
+      correct: 1
+    }
+  ];
+
+  let currentQ = 0;
+  let score = 0;
+  let answered = false;
+
+  const rightMemes = ['🎉', '🥳', '😎', '👏', '💯', '🌟'];
+  const wrongMemes = ['😭', '❌', '😿', '💔', '🙈', '🤦‍♂️'];
+
+  const rightSmileys = ['🎉', '💯', '⭐', '😊', '✅', '✨'];
+  const wrongSmileys = ['❌', '😭', '🚫', '💔', '🥺', '⚠️'];
+
+  function startQuiz() {
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'flex';
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    answered = false;
+    document.getElementById('feedback-area').classList.remove('active');
+
+    const q = quizData[currentQ];
+    document.getElementById('q-num').innerText = `${currentQ + 1}-сұрақ / 10`;
+    document.getElementById('progress-bar').style.width = `${((currentQ + 1) / 10) * 100}%`;
+    document.getElementById('text-content').innerText = q.text;
+    document.getElementById('question-text').innerText = q.question;
+
+    const optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = '';
+
+    const letters = ['A', 'B', 'C'];
+    q.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = `<span class="option-prefix">${letters[idx]}</span> <span>${opt}</span>`;
+      btn.onclick = () => selectOption(idx, btn);
+      optionsContainer.appendChild(btn);
+    });
+  }
+
+  function selectOption(index, btnElement) {
+    if (answered) return;
+    answered = true;
+
+    const q = quizData[currentQ];
+    const allBtns = document.querySelectorAll('.option-btn');
+
+    if (index === q.correct) {
+      score++;
+      document.getElementById('score').innerText = score;
+      btnElement.classList.add('correct');
+      showFeedback(true);
+      triggerSmileys(true);
+    } else {
+      btnElement.classList.add('wrong');
+      allBtns[q.correct].classList.add('correct');
+      showFeedback(false);
+      triggerSmileys(false);
+    }
+  }
+
+  function showFeedback(isCorrect) {
+    const feedbackArea = document.getElementById('feedback-area');
+    const meme = document.getElementById('meme-sticker');
+
+    if (isCorrect) {
+      meme.innerText = rightMemes[Math.floor(Math.random() * rightMemes.length)];
+      meme.style.borderColor = '#00e676';
+    } else {
+      meme.innerText = wrongMemes[Math.floor(Math.random() * wrongMemes.length)];
+      meme.style.borderColor = '#ff5252';
+    }
+
+    feedbackArea.classList.add('active');
+  }
+
+  function triggerSmileys(isCorrect) {
+    const container = document.getElementById('smiley-container');
+    const list = isCorrect ? rightSmileys : wrongSmileys;
+
+    for (let i = 0; i < 15; i++) {
+      setTimeout(() => {
+        const smiley = document.createElement('div');
+        smiley.className = 'smiley';
+        smiley.innerText = list[Math.floor(Math.random() * list.length)];
+        smiley.style.left = Math.random() * 95 + '%';
+        smiley.style.animationDuration = (1.5 + Math.random()) + 's';
+        container.appendChild(smiley);
+
+        setTimeout(() => smiley.remove(), 2000);
+      }, i * 80);
+    }
+  }
+
+  function nextQuestion() {
+    currentQ++;
+    if (currentQ < quizData.length) {
+      loadQuestion();
+    } else {
+      showFinal();
+    }
+  }
+
+  function showFinal() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('final-screen').style.display = 'flex';
+    document.getElementById('final-score-text').innerText = `${score} / 10`;
+
+    let comment = '';
+    if (score === 10) comment = 'Өте тамаша! Пайымдау мәтінін толық меңгергенсіз! 🌟';
+    else if (score >= 7) comment = 'Жақсы нәтиже! Пайымдау логикасын жақсы түсінесіз. 👍';
+    else comment = 'Тағы да жаттығу жасап көріңіз! Талабыңа нұр жаусын! 💪';
+
+    document.getElementById('final-comment').innerText = comment;
+  }
+
+  function restartQuiz() {
+    currentQ = 0;
+    score = 0;
+    document.getElementById('score').innerText = '0';
+    document.getElementById('final-screen').style.display = 'none';
+    document.getElementById('start-screen').style.display = 'flex';
+  }
+</script>
+</body>
+</html>
